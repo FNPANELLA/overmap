@@ -74,6 +74,18 @@ class QueryTranslator:
                 extracted['filters'].append('internet_access=wlan')
             if token.text in ['parking', 'aparcamiento']:
                 extracted['filters'].append('parking')
+                # FILTROS DE HORARIO 
+            if token.text in ['abierto', 'abierta']:
+                
+                extracted['filters'].append('opening_hours=~^.{1,100}$') # Verifica la existencia del tag
+
+            # FILTROS DE PRECIO/COSTO
+            if token.text in ['barato', 'económico']:
+                # Filtra por el nivel de precio más bajo
+                extracted['filters'].append('price_level=1') 
+            if token.text in ['caro', 'lujoso']:
+                # Filtra por un nivel de precio alto
+                extracted['filters'].append('price_level=3')
 
         return extracted
     
@@ -112,11 +124,14 @@ class QueryTranslator:
 
             final_tag_filter = tag_filter
             for f in filters:
-                if '=' in f:
+                if f.startswith('opening_hours='):
+                    # Filtro especial para existencia de opening_hours
+                    final_tag_filter += f"[opening_hours]" 
+                elif '=' in f:
                     f_key, f_value = f.split('=')
                     final_tag_filter += f"[\"{f_key}\"=\"{f_value}\"]"
                 else:
-                    final_tag_filter += f"[\"{f}\"]" 
+                    final_tag_filter += f"[\"{f}\"]"
             
             # El filtro de BBox se añade justo después del tag filter
             ql_body += f"  {tag_type}{final_tag_filter}{bbox_filter};\n"
