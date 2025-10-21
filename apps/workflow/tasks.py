@@ -3,7 +3,7 @@ from django.utils import timezone
 from apps.workflow.models import Workflow, Result
 from .nlp_processor import QueryTranslator
 from .overpass_handler import QueryExec
-
+from tasks import run_selenium_job
 from .export_handler import DataExporter
 
 @shared_task(name='apps.workflow.tasks.execute_overpass')
@@ -14,23 +14,28 @@ def execute_overpass(workflow_id: int):
         if workflow.status == 'PENDING':
             workflow.status = 'RUNNING'
             workflow.save()
-            
         translator = QueryTranslator()
+
         overpass_ql_code = translator.generate_overpass_ql(workflow.query_nl)
-        
+
         executor = QueryExec()
+
         results_data = executor.execute_query(overpass_ql_code) 
-        
+        created_results = []
         for item in results_data:
 
-            Result.objects.create(
+            new_result = Result.objects.create(
                 workflow=workflow, 
                 osm_id=item.get('osm_id'), 
                 data=item
             )
+            created_results.append(new_result)
         workflow.status = 'COMPLETED'
         workflow.completed_at = timezone.now()
         workflow.save()
+
+        for result in created_results:
+            run_selenium_job.delay(result.id)
         
         return f"Workflow {workflow_id} completado. Resultados: {len(results_data)}"
     except Workflow.DoesNotExist:
@@ -52,6 +57,7 @@ def run_selenium_job(result_id: int):
         # 2. registro en la base de datos
         result.data = updated_data
         result.save()
+
         return f"Resultado {result_id} procesado mediante selenium. Estado: {updated_data.get('selenium_status', 'OK')}"
     except Result.DoesNotExist:
         return "error: result does not exist."
@@ -59,8 +65,8 @@ def run_selenium_job(result_id: int):
         # En caso de error, registrarlo en el resultado
         Result.objects.filter(id=result_id).update(data={'selenium_status': f'FATAL_ERROR: {str(e)}'})
         raise e
+    
 @shared_task(name='apps.workflow.tasks.export_data')
-
 def export_data(workflow_id: int):
     try:
         exporter = DataExporter()
