@@ -1,0 +1,10 @@
+Django
+djangorestframework
+psycopg2-binary
+requests
+pandas
+spacy
+celery
+redis
+selenium
+geopy
