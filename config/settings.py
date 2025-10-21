@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-DEBUG = True #dev
+DEBUG = os.environ.get("DEBUG_STATE") #dev
 
 #
 #SESSION_ENGINE = 'django.contrib.sessions.backends.file'
@@ -95,7 +95,7 @@ CELERY_TASK_ROUTES = {
     'apps.workflow.tasks.run_selenium_job': {'queue': 'selenium_jobs'},
 }
 SPACY_MODEL = 'es_core_news_sm'
-SELENIUM_WEBDRIVER_PATH = os.environ.get('WEBDRIVER_PATH', 'O:\\DEV\\chromedriver-win64\\chromedriver.exe')
+SELENIUM_WEBDRIVER_PATH = os.environ.get('WEBDRIVER_PATH')
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
