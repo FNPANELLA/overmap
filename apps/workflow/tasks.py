@@ -3,7 +3,6 @@ from django.utils import timezone
 from apps.workflow.models import Workflow, Result
 from .nlp_processor import QueryTranslator
 from .overpass_handler import QueryExec
-from tasks import run_selenium_job
 from .export_handler import DataExporter
 
 @shared_task(name='apps.workflow.tasks.execute_overpass')

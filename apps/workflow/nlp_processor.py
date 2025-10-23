@@ -21,6 +21,7 @@ class QueryTranslator:
             'restaurante': 'amenity=restaurant',
             'restaurantes': 'amenity=restaurant',
             'tienda': 'shop',
+            'tiendas': 'shop',
             'biblioteca': 'amenity=library',
             'bibliotecas': 'amenity=library',
             'oficina de correos': 'amenity=post_office', 
@@ -28,12 +29,15 @@ class QueryTranslator:
             'museo': 'tourism=museum',
             'museos': 'tourism=museum',
             'supermercado': 'shop=supermarket',
+            'supermercados': 'shop=supermarket',
             'banco': 'amenity=bank',
+            'bancos': 'amenity=bank',
             'farmacia': 'amenity=pharmacy',
+            'farmacias': 'amenity=pharmacy',
         }
 
     def _geocode_location(self, location_name: str) -> Optional[Dict[str, float]]:
-        """Convierte el nombre de una ubicación a un BBox de coordenadas usando Nominatim."""
+        #nominator bbox
         geolocator = Nominatim(user_agent="Overmap-Project-Automation-V1")
         try:
             location = geolocator.geocode(location_name, exactly_one=True, timeout=5)
