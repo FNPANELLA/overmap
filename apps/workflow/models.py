@@ -8,6 +8,7 @@ class Workflow(models.Model):
         ('RUNNING', 'En ejecución'),
         ('COMPLETED', 'Completado'),
         ('FAILED', 'Fallido'),
+        ('EXPORTED', 'Exportado'),
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -19,6 +20,9 @@ class Workflow(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+
+    export_file_path = models.CharField(max_length=512, null=False, blank=True, verbose_name="Ruta del archivo exportado")
+    
 
     class Meta:
         verbose_name = "Flujo de Trabajo"

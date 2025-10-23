@@ -1,4 +1,6 @@
-
+import os
+from django.http import FileResponse, Http404, HttpRequest
+from django.conf import settings
 from rest_framework import generics
 from .models import Workflow, Result
 from .serializers import WorkflowSerializer, ResultSerializer
@@ -40,3 +42,24 @@ class ExportDataView(APIView):
         #   exportación
         export_data.delay(workflow.id) 
         return Response({"message": "Exportación a CSV iniciada.", "workflow_id": pk}, status=status.HTTP_202_ACCEPTED)
+
+class WorkflowDownloadView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request: HttpRequest, pk: int, format=None):
+        try:
+            workflow = Workflow.objects.get(pk=pk, user=request.user)
+        except Workflow.DoesNotExist:
+            return Response({"error": "Workflow no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        
+        file_path = workflow.export_file_path
+        if not file_path:
+            return Response({"error": "El archivo de exportación aún no está listo."}, status=status.HTTP_404_NOT_FOUND)
+        if not os.path.exists(file_path):
+            return Response({"error": "Error: El archivo exportado no se encuentra en el servidor."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        try:
+            response = FileResponse(open(file_path, 'rb'), as_attachment=True, content_type='text/csv')
+            response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
+            return response
+        except Exception as e:
+            return Response({"error": f"No se pudo leer el archivo: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

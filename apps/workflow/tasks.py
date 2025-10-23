@@ -64,15 +64,23 @@ def run_selenium_job(result_id: int):
         # En caso de error, registrarlo en el resultado
         Result.objects.filter(id=result_id).update(data={'selenium_status': f'FATAL_ERROR: {str(e)}'})
         raise e
-    
+
 @shared_task(name='apps.workflow.tasks.export_data')
 def export_data(workflow_id: int):
     try:
+        # Busca el workflow primero
+        workflow = Workflow.objects.get(id=workflow_id)
         exporter = DataExporter()
         file_path = exporter.export_to_csv(workflow_id)
         
-        Workflow.objects.filter(id=workflow_id).update(status='EXPORTED', completed_at=timezone.now())
+        workflow.status = 'EXPORTED'
+        workflow.completed_at = timezone.now()
+        workflow.export_file_path = file_path  
+        workflow.save()
         
         return f"Datos exportados a: {file_path}"
+    except Workflow.DoesNotExist:
+        return "Error: Workflow no encontrado."
     except Exception as e:
         raise e
+    
