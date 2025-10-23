@@ -9,6 +9,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 DEBUG = os.environ.get("DEBUG_STATE") #dev
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 #
 #SESSION_ENGINE = 'django.contrib.sessions.backends.file'
 #SESSION_FILE_PATH = os.path.join(BASE_DIR, 'django_sessions')
@@ -24,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'apps.accounts',
     'apps.workflow',
 ]
@@ -68,6 +71,7 @@ DATABASES = {
         'PORT': '5432',
     }
 
+
 }
 AUTH_PASSWORD_VALIDATORS = [
     
@@ -101,5 +105,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    #  configuraciones de DRF 
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
 }

@@ -1,10 +1,18 @@
 # apps/accounts/urls.py
 from django.urls import path
-
-# Si vas a usar Django Rest Framework para autenticación (login/registro):
-# from .views import UserRegistrationView, UserLoginView 
+from .views import UserRegistrationView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,)
 
 urlpatterns = [
-    # path('register/', UserRegistrationView.as_view(), name='register'),
-    # path('login/', UserLoginView.as_view(), name='login'),
+    # Endpoint para que un usuario se registre
+    path('register/', UserRegistrationView.as_view(), name='register'),
+    
+    # Endpoint para que un usuario inicie sesión (obtiene tokens)
+    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    
+    # Endpoint para refrescar un token de acceso
+    path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
+
