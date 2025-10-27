@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Workflow, WorkflowStep, Result
+from .models import Workflow, Result
 # p/ create
 class WorkflowSerializer(serializers.ModelSerializer):
 #   serializer

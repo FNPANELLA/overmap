@@ -30,25 +30,11 @@ class Workflow(models.Model):
         ordering = ['-created_at']
     def __str__(self):
         return f"[{self.status}] {self.name} por {self.user.username}"
-class WorkflowStep(models.Model):
-    ACTION_CHOICES = (
-        ('NLP_EXTRACT', 'Extracción NLP'),
-        ('OVERPASS_QUERY', 'Consulta Overpass'),
-        ('SELENIUM_PROCESS', 'Procesamiento Selenium'),
-        ('EXPORT_CSV', 'Exportar CSV/BI'),
-    )
-
-
-    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name='steps')
-    
-    step_number = models.PositiveSmallIntegerField(verbose_name="Número de Paso")
-    action = models.CharField(max_length=20, choices=ACTION_CHOICES)
-    parameters = models.JSONField(default=dict, help_text="Parámetros para la acción (e.g., el query QL generado).")
 
     class Meta:
         verbose_name = "Paso de Flujo"
         verbose_name_plural = "Pasos de Flujo"
-        ordering = ['step_number']
+        ordering = ['created_at']
 
     def __str__(self):
         return f"Paso {self.step_number}: {self.action} en {self.workflow.name}"
