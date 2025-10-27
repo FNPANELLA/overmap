@@ -32,6 +32,15 @@ class SeleniumProcessor:
             'facebook_url': r'https://(www\.)?facebook\.com/[^\'"]+',
             'instagram_url': r'https://(www\.)?instagram\.com/[^\'"]+',
         }
+        for key, pattern in social_patterns.items():
+            match = re.search(pattern, page_source, re.IGNORECASE)
+            if match:
+                found_url = match.group(0)
+                if key == 'facebook_url':
+                    found_url = found_url.split('?')[0]
+                if key == 'instagram_url':
+                    found_url = found_url.split('?')[0]
+                updated_data[key] = found_url
 
     def run_validation(self, url: str, old_data: Dict[str, Any]) -> Dict[str, Any]:
         updated_data = old_data.copy()
