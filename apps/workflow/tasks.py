@@ -40,7 +40,7 @@ def execute_overpass(workflow_id: int):
     except Workflow.DoesNotExist:
         return "Error: Workflow no encontrado."
     except Exception as e:
-        Workflow.objects.filter(id=workflow_id).update(status='FAILED')
+        Workflow.objects.filter(id=workflow_id).update(status='FAILED', error_message=str(e))
         raise e
 @shared_task(name='apps.workflow.tasks.run_selenium_job')
 def run_selenium_job(result_id: int):
@@ -82,5 +82,7 @@ def export_data(workflow_id: int):
     except Workflow.DoesNotExist:
         return "Error: Workflow no encontrado."
     except Exception as e:
+        Workflow.objects.filter(id=workflow_id).update(status='FAILED', error_message=str(e))
+        
         raise e
     

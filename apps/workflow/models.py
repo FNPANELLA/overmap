@@ -12,16 +12,13 @@ class Workflow(models.Model):
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    
     name = models.CharField(max_length=255, verbose_name="Nombre del Flujo")
     query_nl = models.TextField(verbose_name="Consulta en Lenguaje Natural") 
-    
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
-    
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
-
     export_file_path = models.CharField(max_length=512, null=False, blank=True, verbose_name="Ruta del archivo exportado")
+    error_message = models.TextField(null=True, blank=True, verbose_name="Mensaje de Error")
     
 
     class Meta:
