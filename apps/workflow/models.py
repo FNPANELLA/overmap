@@ -28,15 +28,6 @@ class Workflow(models.Model):
     def __str__(self):
         return f"[{self.status}] {self.name} por {self.user.username}"
 
-    class Meta:
-        verbose_name = "Paso de Flujo"
-        verbose_name_plural = "Pasos de Flujo"
-        ordering = ['created_at']
-
-    def __str__(self):
-        return f"Paso {self.step_number}: {self.action} en {self.workflow.name}"
-
-
 class Result(models.Model):
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name='results')
     
