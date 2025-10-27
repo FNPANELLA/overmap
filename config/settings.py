@@ -96,6 +96,7 @@ CELERY_TASK_ALWAYS_EAGER = False
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_ROUTES = {
     'apps.workflow.tasks.execute_overpass': {'queue': 'overpass_queries'},
+    'apps.workflow.tasks.export_data': {'queue': 'selenium_jobs'},
     'apps.workflow.tasks.run_selenium_job': {'queue': 'selenium_jobs'},
 }
 SPACY_MODEL = 'es_core_news_sm'
