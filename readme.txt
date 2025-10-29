@@ -1,3 +1,16 @@
+después de ejecutar pip install -r requirements.txt, ejecutar:
+python -m spacy download es_core_news_sm
+
+VARIABLES DE ENTORNO
+
+WEBDRIVER_PATH  = directorio de chromedriver
+DEBUG_STATE = True o False
+PASSWORD = contraseña de tu base de datos (postgres)
+SECRET_KEY =  es el resultado de:
+import secrets
+secrets.token_hex(32) 
+
+
 habilitar redis mediante docker, usar pws o directamente desde docker
 
 cerciorate de que pgadmin4 tenga la base corriendo de forma correcta

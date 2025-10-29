@@ -16,6 +16,7 @@ from .models import Workflow
 from .tasks import execute_overpass
 
 
+
 class WorkflowListCreate(generics.ListCreateAPIView):
 
     serializer_class = WorkflowSerializer
@@ -100,5 +101,7 @@ def export_workflow_view(request, pk):
     except Workflow.DoesNotExist:
         return redirect('dashboard')
     if workflow.status == 'COMPLETED':
+        workflow.status = 'RUNNING'
+        workflow.save()
         export_data.delay(workflow.id) 
     return redirect('dashboard')
