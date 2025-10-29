@@ -4,6 +4,7 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from rest_framework import generics
+from django.views.decorators.http import require_POST
 from .models import Workflow, Result
 from .serializers import WorkflowSerializer, ResultSerializer
 from rest_framework import permissions
@@ -90,3 +91,14 @@ def dashboard_view(request):
             'workflows': workflows
             }
         return render(request, 'dashboard.html', context)
+
+@require_POST
+@login_required
+def export_workflow_view(request, pk):
+    try:
+        workflow = Workflow.objects.get(pk=pk, user=request.user)
+    except Workflow.DoesNotExist:
+        return redirect('dashboard')
+    if workflow.status == 'COMPLETED':
+        export_data.delay(workflow.id) 
+    return redirect('dashboard')
