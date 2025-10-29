@@ -1,13 +1,4 @@
-# 00.py — test rápido de celery
 import os
-
-# --- si usás eventlet, parchear antes de otras importaciones que creen threads/locks
-#try:
-#    import eventlet
-
-#    eventlet.monkey_patch()
-#except Exception:
-#    pass
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 

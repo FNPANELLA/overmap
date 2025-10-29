@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Overmap{% endblock %}
+
+{% block content %}
+<h3>Hola, {{ user.username }}</h3>
+<p>Bienvenido a tu dashboard. Desde aquí podrás crear y ver tus workflows.</p>
+
+<div class="row">
+<div class="col-md-4">
+<div class="card shadow-sm">
+    <div class="card-body">
+    <h5 class="card-title">Crear Nuevo Workflow</h5>
+    <form id="workflowForm">
+        <div class="mb-3">
+        <label for="workflowName" class="form-label">Nombre del Reporte</label>
+        <input type="text" class="form-control" id="workflowName" required>
+        </div>
+        <div class="mb-3">
+        <label for="queryNL" class="form-label">¿Qué deseas buscar?</label>
+        <textarea class="form-control" id="queryNL" rows="3" placeholder="Ej: Restaurantes en Palermo, Buenos Aires"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Iniciar</button>
+    </form>
+    </div>
+</div>
+</div>
+
+<div class="col-md-8">
+<div class="card shadow-sm">
+    <div class="card-body">
+    <h5 class="card-title">Mis Workflows</h5>
+    <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>Creado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Prueba 1</td>
+            <td><span class="badge bg-success">COMPLETED</span></td>
+            <td>Hace 5 min</td>
+            <td><a href="#" class="btn btn-sm btn-success">Descargar</a></td>
+        </tr>
+        <tr>
+            <td>Prueba 2</td>
+            <td><span class="badge bg-primary">RUNNING</span></td>
+            <td>Hace 1 min</td>
+            <td>...</td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

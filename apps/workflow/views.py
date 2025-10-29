@@ -1,6 +1,8 @@
 import os
 from django.http import FileResponse, Http404, HttpRequest
 from django.conf import settings
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from rest_framework import generics
 from .models import Workflow, Result
 from .serializers import WorkflowSerializer, ResultSerializer
@@ -9,6 +11,8 @@ from .tasks import export_data
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from .models import Workflow
+from .tasks import execute_overpass
 
 
 class WorkflowListCreate(generics.ListCreateAPIView):
@@ -63,3 +67,26 @@ class WorkflowDownloadView(APIView):
             return response
         except Exception as e:
             return Response({"error": f"No se pudo leer el archivo: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@login_required 
+def dashboard_view(request):
+        #post
+        if request.method == 'POST':
+            name = request.POST.get('workflow_name')
+            query_nl = request.POST.get('query_nl')
+
+            workflow = Workflow.objects.create(
+                user=request.user,
+                name=name,
+                query_nl=query_nl,
+                status='PENDING')
+            execute_overpass.delay(workflow.id)
+
+            return redirect('dashboard')
+        
+    #get
+        workflows = Workflow.objects.filter(user=request.user)
+        context = {
+            'workflows': workflows
+            }
+        return render(request, 'dashboard.html', context)
