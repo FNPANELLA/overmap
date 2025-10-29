@@ -22,8 +22,8 @@ class WorkflowListCreate(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 
-    def get_queryset(self):
-        return Workflow.objects.all().order_by('-created_at')
+def get_queryset(self):
+    return Workflow.objects.filter(user=self.request.user)
 
 class WorkflowDetail(generics.RetrieveAPIView):
 
