@@ -1,11 +1,12 @@
-
 habilitar redis mediante docker, usar pws o directamente desde docker
 
 cerciorate de que pgadmin4 tenga la base corriendo de forma correcta
 
 python manage.py runserver
 
-celery: 
+celery; se pueden usar dos terminales dentro del venv o una sola si se fusiona mediante el codigo las listas de trabajo o mediante el query de celery
+
+celery -A config worker --loglevel=info -P solo -Q selenium_jobs,overpass_queries
 
 celery -A config worker --loglevel=info -P solo -Q selenium_jobs
 celery -A config worker --loglevel=info -P solo -Q overpass_queries
