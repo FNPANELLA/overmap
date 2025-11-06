@@ -1,5 +1,5 @@
 
-from apps.workflow.views import dashboard_view
+from apps.workflow.views import dashboard_view, logoff
 from django.contrib import admin
 from django.urls import path, include 
 from apps.accounts.views import RegisterView
@@ -17,4 +17,5 @@ urlpatterns = [
     path('accounts/register/', RegisterView.as_view(), name='register'),
     path('', dashboard_view, name=("dashboard")),
     path('workflow/<int:pk>/export_start/', export_workflow_view, name='export_start'),
+    path('logout/', logoff, name="logout")
 ]

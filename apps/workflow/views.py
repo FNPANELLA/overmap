@@ -3,6 +3,7 @@ from django.http import FileResponse, Http404, HttpRequest
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout as auth_logout
 from rest_framework import generics
 from django.views.decorators.http import require_POST
 from .models import Workflow, Result
@@ -105,3 +106,8 @@ def export_workflow_view(request, pk):
         workflow.save()
         export_data.delay(workflow.id) 
     return redirect('dashboard')
+
+@login_required
+def logoff(request):
+    auth_logout(request)
+    return redirect('logout')
