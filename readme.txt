@@ -1,37 +1,71 @@
-después de ejecutar pip install -r requirements.txt, ejecutar:
-python -m spacy download es_core_news_sm
+# Overmap
 
-VARIABLES DE ENTORNO
+Overmap es una aplicación web y API que transforma consultas en lenguaje natural en conjuntos de datos.
 
-WEBDRIVER_PATH  = directorio de chromedriver
-DEBUG_STATE = True o False
-PASSWORD = contraseña de tu base de datos (postgres)
-SECRET_KEY =  es el resultado de:
-import secrets
-secrets.token_hex(32) 
+El sistema traduce la consulta usando NLP, obtiene datos de OpenStreetMap, enriquece los resultados con Selenium (buscando email, redes sociales, etc.) y exporta un CSV. El proceso se gestiona mediante tareas asíncronas con Celery.
 
+## Stack
 
-habilitar redis mediante docker, usar pws o directamente desde docker
+Django, Django Rest Framework, Celery, Redis, PostgreSQL, SpaCy, Selenium, Pandas, GeoPy.
 
-cerciorate de que pgadmin4 tenga la base corriendo de forma correcta
+## Instalación y Configuración
+
+### 1\. Prerrequisitos
+
+Python 3.x
+PostgreSQL
+Redis
+Un WebDriver (ej. `chromedriver`)
+
+### 2\. Clonar e Instalar Dependencias
+
+git clone [https://github.com/tu-usuario/overmap.git](https://www.google.com/search?q=https://github.com/tu-usuario/overmap.git)
+cd overmap
+
+python -m venv .venv
+source .venv/bin/activate
+
+pip install -r requirements.txt
+
+python -m spacy download es\_core\_news\_sm
+
+### 3\. Configuración del Entorno
+
+Crea un archivo `.env` en la raíz del proyecto y añade las siguientes variables:
+
+SECRET\_KEY=tu\_secret\_key\_de\_django
+DEBUG\_STATE=True
+PASSWORD=tu\_contraseña\_de\_postgres\_db
+WEBDRIVER\_PATH=/usr/local/bin/chromedriver
+
+### 4\. Base de Datos
+
+Cerciorate de haber creado una base de datos en PostgreSQL llamada `overmap_db`.
+
+Aplica las migraciones de Django:
+
+python manage.py migrate
+
+## Cómo Ejecutar la Aplicación
+
+Necesitas 2 o 3 terminales abiertas en la raíz del proyecto.
+
+### Terminal 1: Servidor de Django
 
 python manage.py runserver
 
-celery; se pueden usar dos terminales dentro del venv o una sola si se fusiona mediante el codigo las listas de trabajo o mediante el query de celery
+### Terminal 2: Workers de Celery
 
-celery -A config worker --loglevel=info -P solo -Q selenium_jobs,overpass_queries
+celery -A config worker --loglevel=info -P solo -Q selenium\_jobs,overpass\_queries
 
-celery -A config worker --loglevel=info -P solo -Q selenium_jobs
-celery -A config worker --loglevel=info -P solo -Q overpass_queries
+## API Endpoints
 
-http://127.0.0.1:8000/api/accounts/register/
+POST /api/accounts/register/
+POST /api/accounts/login/
+GET, POST /api/workflows/
+GET /api/workflows/[int:pk](https://www.google.com/search?q=int:pk)/
+POST /api/workflows/[int:pk](https://www.google.com/search?q=int:pk)/export/
+GET /api/workflows/[int:pk](https://www.google.com/search?q=int:pk)/download/
+GET /api/results/[int:pk](https://www.google.com/search?q=int:pk)/
 
-http://127.0.0.1:8000/api/accounts/login/
-
-http://127.0.0.1:8000/api/workflows/
-
-http://127.0.0.1:8000/api/workflows/<id_del_workflow>/
-
-http://127.0.0.1:8000/api/workflows/<id_del_workflow>/export/
-
-http://127.0.0.1:8000/api/workflows/<id_del_workflow>/download/
+hecho en 1 semana con amor por Federico Panella
