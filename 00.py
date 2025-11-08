@@ -17,3 +17,8 @@ if __name__ == "__main__":
         print("Result get (with timeout 10s):", result.get(timeout=10))
     except Exception as e:
         print("No se pudo obtener resultado desde result backend:", e)
+
+
+
+
+##0
