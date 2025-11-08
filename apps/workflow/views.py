@@ -22,10 +22,8 @@ class WorkflowListCreate(generics.ListCreateAPIView):
 
     serializer_class = WorkflowSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-
-def get_queryset(self):
-    return Workflow.objects.filter(user=self.request.user)
+    def get_queryset(self):
+        return Workflow.objects.filter(user=self.request.user)
 
 class WorkflowDetail(generics.RetrieveAPIView):
 
@@ -73,26 +71,33 @@ class WorkflowDownloadView(APIView):
 
 @login_required 
 def dashboard_view(request):
-        #post
-        if request.method == 'POST':
-            name = request.POST.get('workflow_name')
-            query_nl = request.POST.get('query_nl')
+    #post
+    if request.method == 'POST':
+        name = request.POST.get('workflow_name')
+        query_nl = request.POST.get('query_nl')
 
-            workflow = Workflow.objects.create(
-                user=request.user,
-                name=name,
-                query_nl=query_nl,
-                status='PENDING')
-            execute_overpass.delay(workflow.id)
+        workflow = Workflow.objects.create(
+            user=request.user,
+            name=name,
+            query_nl=query_nl,
+            status='PENDING')
+        execute_overpass.delay(workflow.id)
 
-            return redirect('dashboard')
+        return redirect('dashboard')
         
-    #get
-        workflows = Workflow.objects.filter(user=request.user)
-        context = {
-            'workflows': workflows
-            }
-        return render(request, 'dashboard.html', context)
+    # GET ACTUALIZADA 
+    workflows_list = Workflow.objects.filter(user=request.user)
+    completed_count = workflows_list.filter(status='COMPLETED').count()
+    processing_count = workflows_list.filter(status__in=['PENDING', 'RUNNING']).count()
+    failed_count = workflows_list.filter(status='FAILED').count()
+    context = {
+        'workflows': workflows_list,
+        'workflows_total': workflows_list.count(),
+        'workflows_completed': completed_count,
+        'workflows_processing': processing_count,
+        'workflows_failed': failed_count,
+    }
+    return render(request, 'dashboard.html', context)
 
 @require_POST
 @login_required
